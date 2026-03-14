@@ -19,15 +19,7 @@ export default function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div
-        className="min-h-screen"
-        style={{
-          backgroundImage: "url('/assets/generated/vocab-bg.dim_800x600.jpg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundAttachment: "fixed",
-        }}
-      >
+      <div className="min-h-screen bg-background">
         {page === "home" && <HomePage onNavigate={setPage} />}
         {page === "browse" && <BrowsePage />}
         {page === "bookmarks" && <BookmarksPage />}
