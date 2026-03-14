@@ -1,4 +1,10 @@
-import { BookOpen, Bookmark, Home, Settings } from "lucide-react";
+import {
+  BookOpen,
+  BookText,
+  Bookmark,
+  ListChecks,
+  Settings,
+} from "lucide-react";
 import type { FC } from "react";
 import type { Page } from "../App";
 
@@ -13,8 +19,9 @@ const items: Array<{
   icon: FC<{ className?: string }>;
   ocid: string;
 }> = [
-  { page: "home", label: "Home", icon: Home, ocid: "nav.home.link" },
+  { page: "home", label: "Daily", icon: BookText, ocid: "nav.home.link" },
   { page: "browse", label: "Browse", icon: BookOpen, ocid: "nav.browse.link" },
+  { page: "quiz", label: "Quiz", icon: ListChecks, ocid: "nav.quiz.link" },
   {
     page: "bookmarks",
     label: "Saved",

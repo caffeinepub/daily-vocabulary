@@ -522,6 +522,230 @@ actor {
       exampleSentence = "The team was jubilant after their victory.";
       etymology = "From Latin 'jubilare', meaning to shout for joy";
       level = "easy";
+    },
+    {
+      word = "Acrimony";
+      definition = "Bitterness or ill feeling, especially in speech or manner.";
+      partOfSpeech = "Noun";
+      exampleSentence = "The divorce proceedings were marked by acrimony.";
+      etymology = "From Latin 'acrimonia', meaning sharpness, pungency";
+      level = "hard";
+    },
+    {
+      word = "Blithe";
+      definition = "Showing a casual and cheerful indifference.";
+      partOfSpeech = "Adjective";
+      exampleSentence = "He was blithe about the risks involved.";
+      etymology = "From Old English 'blithe', meaning joyous";
+      level = "medium";
+    },
+    {
+      word = "Candor";
+      definition = "The quality of being open and honest in expression; frankness.";
+      partOfSpeech = "Noun";
+      exampleSentence = "She spoke with such candor that everyone trusted her.";
+      etymology = "From Latin 'candor', meaning whiteness, purity";
+      level = "easy";
+    },
+    {
+      word = "Dauntless";
+      definition = "Showing fearlessness and determination.";
+      partOfSpeech = "Adjective";
+      exampleSentence = "The dauntless explorer pressed on despite the storm.";
+      etymology = "From 'daunt', from Old French 'danter', meaning to frighten";
+      level = "medium";
+    },
+    {
+      word = "Enervate";
+      definition = "To make someone feel drained of energy or vitality.";
+      partOfSpeech = "Verb";
+      exampleSentence = "The tropical heat enervated the entire expedition team.";
+      etymology = "From Latin 'enervare', meaning to weaken";
+      level = "hard";
+    },
+    {
+      word = "Florid";
+      definition = "Having a red or flushed complexion; excessively elaborate in style.";
+      partOfSpeech = "Adjective";
+      exampleSentence = "His florid writing style was admired by some and mocked by others.";
+      etymology = "From Latin 'floridus', meaning flowery";
+      level = "hard";
+    },
+    {
+      word = "Guile";
+      definition = "Sly or cunning intelligence used to deceive.";
+      partOfSpeech = "Noun";
+      exampleSentence = "She used guile rather than force to get what she wanted.";
+      etymology = "From Old French 'guile', meaning deceit";
+      level = "medium";
+    },
+    {
+      word = "Hapless";
+      definition = "Unfortunate; unlucky.";
+      partOfSpeech = "Adjective";
+      exampleSentence = "The hapless traveler missed his connecting flight.";
+      etymology = "From Old Norse 'happ', meaning chance, luck";
+      level = "medium";
+    },
+    {
+      word = "Incisive";
+      definition = "Intelligently analytical and clear-thinking.";
+      partOfSpeech = "Adjective";
+      exampleSentence = "Her incisive questions cut straight to the heart of the problem.";
+      etymology = "From Latin 'incidere', meaning to cut into";
+      level = "hard";
+    },
+    {
+      word = "Jocular";
+      definition = "Fond of or characterized by joking; playful.";
+      partOfSpeech = "Adjective";
+      exampleSentence = "His jocular nature made him popular at parties.";
+      etymology = "From Latin 'jocularis', meaning full of jokes";
+      level = "medium";
+    },
+    {
+      word = "Languid";
+      definition = "Displaying or having a disinclination for physical exertion or effort.";
+      partOfSpeech = "Adjective";
+      exampleSentence = "The hot afternoon left everyone feeling languid.";
+      etymology = "From Latin 'languidus', meaning faint, weak";
+      level = "medium";
+    },
+    {
+      word = "Munificent";
+      definition = "Larger or more generous than is usual or necessary.";
+      partOfSpeech = "Adjective";
+      exampleSentence = "The munificent donor funded an entire new wing of the hospital.";
+      etymology = "From Latin 'munificentia', meaning bountifulness";
+      level = "hard";
+    },
+    {
+      word = "Nascent";
+      definition = "Just coming into existence and beginning to display signs of future potential.";
+      partOfSpeech = "Adjective";
+      exampleSentence = "The nascent technology showed great promise.";
+      etymology = "From Latin 'nasci', meaning to be born";
+      level = "hard";
+    },
+    {
+      word = "Opulent";
+      definition = "Ostentatiously rich and luxurious.";
+      partOfSpeech = "Adjective";
+      exampleSentence = "The opulent mansion had marble floors and gold fixtures.";
+      etymology = "From Latin 'opulentus', meaning wealthy";
+      level = "medium";
+    },
+    {
+      word = "Pernicious";
+      definition = "Having a harmful effect, especially in a gradual or subtle way.";
+      partOfSpeech = "Adjective";
+      exampleSentence = "The pernicious influence of social media on self-esteem is well documented.";
+      etymology = "From Latin 'perniciosus', meaning destructive";
+      level = "hard";
+    },
+    {
+      word = "Querulous";
+      definition = "Complaining in a petulant or whining manner.";
+      partOfSpeech = "Adjective";
+      exampleSentence = "The querulous customer complained about every minor detail.";
+      etymology = "From Latin 'querulus', meaning complaining";
+      level = "hard";
+    },
+    {
+      word = "Recalcitrant";
+      definition = "Having an obstinately uncooperative attitude.";
+      partOfSpeech = "Adjective";
+      exampleSentence = "The recalcitrant student refused to follow any instructions.";
+      etymology = "From Latin 'recalcitrare', meaning to kick back";
+      level = "hard";
+    },
+    {
+      word = "Solace";
+      definition = "Comfort or consolation in a time of distress or sadness.";
+      partOfSpeech = "Noun";
+      exampleSentence = "She found solace in music after the loss of her friend.";
+      etymology = "From Latin 'solatium', meaning comfort";
+      level = "easy";
+    },
+    {
+      word = "Tenacious";
+      definition = "Tending to keep a firm hold of something; not relinquishing easily.";
+      partOfSpeech = "Adjective";
+      exampleSentence = "Her tenacious attitude helped her overcome every obstacle.";
+      etymology = "From Latin 'tenax', meaning holding fast";
+      level = "medium";
+    },
+    {
+      word = "Usurp";
+      definition = "To take a position of power or importance illegally or by force.";
+      partOfSpeech = "Verb";
+      exampleSentence = "The general attempted to usurp control of the government.";
+      etymology = "From Latin 'usurpare', meaning to seize for use";
+      level = "hard";
+    },
+    {
+      word = "Vacuous";
+      definition = "Having or showing a lack of thought or intelligence; mindless.";
+      partOfSpeech = "Adjective";
+      exampleSentence = "His vacuous smile revealed he had not understood a word.";
+      etymology = "From Latin 'vacuus', meaning empty";
+      level = "hard";
+    },
+    {
+      word = "Wistful";
+      definition = "Having or showing a feeling of vague or regretful longing.";
+      partOfSpeech = "Adjective";
+      exampleSentence = "She gave a wistful look at the old photograph.";
+      etymology = "Possibly from 'wistly', meaning intently";
+      level = "easy";
+    },
+    {
+      word = "Zeal";
+      definition = "Great energy or enthusiasm in pursuit of a cause or objective.";
+      partOfSpeech = "Noun";
+      exampleSentence = "He pursued his studies with remarkable zeal.";
+      etymology = "From Greek 'zelos', meaning ardor, jealousy";
+      level = "easy";
+    },
+    {
+      word = "Adroit";
+      definition = "Clever or skillful in using the hands or mind.";
+      partOfSpeech = "Adjective";
+      exampleSentence = "She was adroit at navigating complex social situations.";
+      etymology = "From French 'adroit', meaning skillful";
+      level = "medium";
+    },
+    {
+      word = "Bucolic";
+      definition = "Relating to the pleasant aspects of the countryside and rural life.";
+      partOfSpeech = "Adjective";
+      exampleSentence = "The painting depicted a bucolic scene of rolling hills and grazing sheep.";
+      etymology = "From Greek 'boukolikos', meaning pastoral";
+      level = "hard";
+    },
+    {
+      word = "Cogent";
+      definition = "Clear, logical, and convincing.";
+      partOfSpeech = "Adjective";
+      exampleSentence = "She made a cogent argument for the new policy.";
+      etymology = "From Latin 'cogere', meaning to drive together";
+      level = "hard";
+    },
+    {
+      word = "Deft";
+      definition = "Neatly skillful and quick in one's movements.";
+      partOfSpeech = "Adjective";
+      exampleSentence = "The surgeon's deft hands moved swiftly through the procedure.";
+      etymology = "From Old English 'gedafte', meaning mild, gentle";
+      level = "easy";
+    },
+    {
+      word = "Exuberant";
+      definition = "Filled with or characterized by lively energy and excitement.";
+      partOfSpeech = "Adjective";
+      exampleSentence = "The exuberant crowd celebrated the team's victory.";
+      etymology = "From Latin 'exuberans', meaning overflowing";
+      level = "medium";
     }
   ];
 
@@ -551,6 +775,42 @@ actor {
     let now = Time.now();
     let daysSinceEpoch = now / (24 * 60 * 60 * 1_000_000_000);
     vocabularyEntries[daysSinceEpoch.toNat() % vocabularyEntries.size()];
+  };
+
+  // Get 20 daily words that rotate every day - Public access
+  public query ({ caller }) func getDailyWords() : async [VocabularyEntry] {
+    let now = Time.now();
+    let daysSinceEpoch = now / (24 * 60 * 60 * 1_000_000_000);
+    let total = vocabularyEntries.size();
+    let dailyCount = 20;
+    let offset = (daysSinceEpoch.toNat() * 7) % total;
+    var result : [VocabularyEntry] = [];
+    var i = 0;
+    while (i < dailyCount) {
+      let idx = (offset + i) % total;
+      result := result.concat([vocabularyEntries[idx]]);
+      i += 1;
+    };
+    result;
+  };
+
+  // Get 20 daily words for a specific level that rotate every day - Public access
+  public query ({ caller }) func getDailyWordsByLevel(level : Text) : async [VocabularyEntry] {
+    let now = Time.now();
+    let daysSinceEpoch = now / (24 * 60 * 60 * 1_000_000_000);
+    let levelEntries = vocabularyEntries.filter(func(e) { e.level == level });
+    let total = levelEntries.size();
+    if (total == 0) { return [] };
+    let dailyCount = Nat.min(20, total);
+    let offset = (daysSinceEpoch.toNat() * 3) % total;
+    var result : [VocabularyEntry] = [];
+    var i = 0;
+    while (i < dailyCount) {
+      let idx = (offset + i) % total;
+      result := result.concat([levelEntries[idx]]);
+      i += 1;
+    };
+    result;
   };
 
   // Bookmark word by index - User authentication required

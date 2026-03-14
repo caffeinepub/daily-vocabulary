@@ -44,8 +44,21 @@ export function useWordsByLevel(level: string | null) {
     queryKey: ["wordsByLevel", level],
     queryFn: async () => {
       if (!actor || level === null) return [];
-      // Cast to any since backend.ts may not yet reflect the latest generated interface
       return (actor as any).getWordsByLevel(level) as Promise<
+        VocabularyEntry[]
+      >;
+    },
+    enabled: !!actor && !isFetching && level !== null,
+  });
+}
+
+export function useDailyWordsByLevel(level: string | null) {
+  const { actor, isFetching } = useActor();
+  return useQuery<VocabularyEntry[]>({
+    queryKey: ["dailyWordsByLevel", level],
+    queryFn: async () => {
+      if (!actor || level === null) return [];
+      return (actor as any).getDailyWordsByLevel(level) as Promise<
         VocabularyEntry[]
       >;
     },
@@ -72,6 +85,18 @@ export function useBookmarkedWords() {
     queryFn: async () => {
       if (!actor) return [];
       return actor.getBookmarkedWords();
+    },
+    enabled: !!actor && !isFetching,
+  });
+}
+
+export function useDailyWords() {
+  const { actor, isFetching } = useActor();
+  return useQuery<VocabularyEntry[]>({
+    queryKey: ["dailyWords"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return (actor as any).getDailyWords() as Promise<VocabularyEntry[]>;
     },
     enabled: !!actor && !isFetching,
   });

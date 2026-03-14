@@ -5,9 +5,10 @@ import { BottomNav } from "./components/BottomNav";
 import BookmarksPage from "./pages/BookmarksPage";
 import BrowsePage from "./pages/BrowsePage";
 import HomePage from "./pages/HomePage";
+import QuizPage from "./pages/QuizPage";
 import SettingsPage from "./pages/SettingsPage";
 
-export type Page = "home" | "browse" | "bookmarks" | "settings";
+export type Page = "home" | "browse" | "bookmarks" | "settings" | "quiz";
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 1, staleTime: 30_000 } },
@@ -18,11 +19,20 @@ export default function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="min-h-screen bg-background">
+      <div
+        className="min-h-screen"
+        style={{
+          backgroundImage: "url('/assets/generated/vocab-bg.dim_800x600.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundAttachment: "fixed",
+        }}
+      >
         {page === "home" && <HomePage onNavigate={setPage} />}
         {page === "browse" && <BrowsePage />}
         {page === "bookmarks" && <BookmarksPage />}
         {page === "settings" && <SettingsPage />}
+        {page === "quiz" && <QuizPage />}
         <BottomNav current={page} onChange={setPage} />
       </div>
       <Toaster position="top-center" richColors />

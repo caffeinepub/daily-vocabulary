@@ -1,5 +1,6 @@
 import { ChevronRight, Sparkles } from "lucide-react";
 import { motion } from "motion/react";
+import { useEffect, useState } from "react";
 import type { Page } from "../App";
 import { WordCardDisplay } from "../components/WordCardDisplay";
 import { WordCardSkeleton } from "../components/WordCardSkeleton";
@@ -21,6 +22,55 @@ const SAMPLE_WORD = {
   level: "medium",
 };
 
+function getTodayISO() {
+  return new Date().toISOString().split("T")[0];
+}
+
+/** Returns the ISO week key (e.g. "2026-W10") for a given ISO date string */
+function getISOWeekKey(isoDate: string): string {
+  const d = new Date(isoDate);
+  // ISO week: week starts Monday
+  const day = d.getUTCDay() || 7; // 1=Mon … 7=Sun
+  const thursday = new Date(d);
+  thursday.setUTCDate(d.getUTCDate() + (4 - day));
+  const year = thursday.getUTCFullYear();
+  const startOfYear = new Date(Date.UTC(year, 0, 1));
+  const week = Math.ceil(
+    ((thursday.getTime() - startOfYear.getTime()) / 86400000 + 1) / 7,
+  );
+  return `${year}-W${String(week).padStart(2, "0")}`;
+}
+
+function useWeeklyStreak() {
+  const [daysThisWeek, setDaysThisWeek] = useState(0);
+
+  useEffect(() => {
+    const today = getTodayISO();
+    const currentWeek = getISOWeekKey(today);
+
+    const savedWeek = localStorage.getItem("weekly_streak_week");
+    let days: string[] = [];
+
+    if (savedWeek === currentWeek) {
+      try {
+        days = JSON.parse(localStorage.getItem("weekly_streak_days") ?? "[]");
+      } catch {
+        days = [];
+      }
+    }
+
+    if (!days.includes(today)) {
+      days = [...days, today];
+    }
+
+    localStorage.setItem("weekly_streak_week", currentWeek);
+    localStorage.setItem("weekly_streak_days", JSON.stringify(days));
+    setDaysThisWeek(days.length);
+  }, []);
+
+  return daysThisWeek;
+}
+
 interface HomePageProps {
   onNavigate: (page: Page) => void;
 }
@@ -30,9 +80,11 @@ export default function HomePage({ onNavigate }: HomePageProps) {
   const { data: bookmarks = [] } = useBookmarkedWords();
   const bookmark = useBookmarkWord();
   const removeBookmark = useRemoveBookmark();
+  const daysThisWeek = useWeeklyStreak();
 
   const displayWord = word ?? SAMPLE_WORD;
   const isBookmarked = bookmarks.some((b) => b.word === displayWord.word);
+  const weekPercent = Math.round((daysThisWeek / 7) * 100);
 
   const handleBookmarkToggle = () => {
     if (isBookmarked) {
@@ -52,7 +104,35 @@ export default function HomePage({ onNavigate }: HomePageProps) {
       }}
     >
       <div className="min-h-screen bg-background/85 backdrop-blur-[2px]">
-        <div className="max-w-md mx-auto px-4 pt-12 pb-28">
+        <div className="max-w-md mx-auto px-4 pt-8 pb-28">
+          {/* Weekly progress bar */}
+          {daysThisWeek > 0 && (
+            <motion.div
+              data-ocid="streak.panel"
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+              className="mb-5 px-4 py-3 rounded-2xl bg-green-50/80 border border-green-200/70 backdrop-blur-sm"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-body font-semibold text-green-700 tracking-wide">
+                  This week
+                </span>
+                <span className="text-xs font-body font-medium text-green-600">
+                  {daysThisWeek}/7 days
+                </span>
+              </div>
+              <div className="h-2 w-full rounded-full bg-green-200/60 overflow-hidden">
+                <motion.div
+                  className="h-full rounded-full bg-green-300"
+                  initial={{ width: 0 }}
+                  animate={{ width: `${weekPercent}%` }}
+                  transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
+                />
+              </div>
+            </motion.div>
+          )}
+
           <motion.div
             initial={{ opacity: 0, y: -12 }}
             animate={{ opacity: 1, y: 0 }}

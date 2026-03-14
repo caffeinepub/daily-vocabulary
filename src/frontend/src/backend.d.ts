@@ -32,9 +32,11 @@ export interface backendInterface {
     getTotalWordCount(): Promise<bigint>;
     getWordCountByLevel(level: string): Promise<bigint>;
     getWordsByLevel(level: string): Promise<Array<VocabularyEntry>>;
+    getDailyWordsByLevel(level: string): Promise<Array<VocabularyEntry>>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     getWordByIndex(index: bigint): Promise<VocabularyEntry | null>;
     getWordOfTheDay(): Promise<VocabularyEntry>;
+    getDailyWords(): Promise<Array<VocabularyEntry>>;
     isCallerAdmin(): Promise<boolean>;
     removeBookmark(index: bigint): Promise<void>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;

@@ -1,25 +1,21 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import {
-  AnimatePresence,
-  motion,
-  useMotionValue,
-  useTransform,
-} from "motion/react";
-import { useCallback, useRef, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import { useCallback, useState } from "react";
 import { WordCardDisplay } from "../components/WordCardDisplay";
 import { WordCardSkeleton } from "../components/WordCardSkeleton";
 import {
   useBookmarkWord,
   useBookmarkedWords,
+  useDailyWords,
+  useDailyWordsByLevel,
   useRemoveBookmark,
   useTotalWordCount,
   useWordByIndex,
-  useWordsByLevel,
 } from "../hooks/useQueries";
 
-type Level = "all" | "easy" | "medium" | "hard";
+type Level = "daily" | "all" | "easy" | "medium" | "hard";
 
-const SAMPLE_WORDS = [
+export const SAMPLE_WORDS = [
   {
     word: "Serendipity",
     partOfSpeech: "noun",
@@ -109,40 +105,176 @@ const SAMPLE_WORDS = [
     etymology: "Latin fenestra — window",
     level: "hard",
   },
+  {
+    word: "Ebullient",
+    partOfSpeech: "adjective",
+    definition: "Cheerful and full of energy; enthusiastically exuberant.",
+    exampleSentence:
+      "Her ebullient personality made every gathering come alive.",
+    etymology: "Latin ebullire — to boil up (e- out + bullire to boil)",
+    level: "medium",
+  },
+  {
+    word: "Petrichor",
+    partOfSpeech: "noun",
+    definition:
+      "A pleasant smell that frequently accompanies the first rain after a long period of warm, dry weather.",
+    exampleSentence: "The petrichor after the summer storm was intoxicating.",
+    etymology: "Greek petra — rock + ichor, the fluid in the veins of the gods",
+    level: "medium",
+  },
+  {
+    word: "Sonder",
+    partOfSpeech: "noun",
+    definition:
+      "The realization that each passerby has a life as vivid and complex as one's own.",
+    exampleSentence:
+      "Standing in the crowd, she was overcome with a deep sense of sonder.",
+    etymology: "Coined by John Koenig in the Dictionary of Obscure Sorrows",
+    level: "easy",
+  },
+  {
+    word: "Ineffable",
+    partOfSpeech: "adjective",
+    definition: "Too great or extreme to be expressed or described in words.",
+    exampleSentence:
+      "The view from the summit produced an ineffable sense of awe.",
+    etymology:
+      "Latin ineffabilis — unutterable (in- not + effari to speak out)",
+    level: "medium",
+  },
+  {
+    word: "Verisimilitude",
+    partOfSpeech: "noun",
+    definition:
+      "The appearance of being true or real; convincing resemblance to reality.",
+    exampleSentence:
+      "The novel's verisimilitude made readers forget it was fiction.",
+    etymology: "Latin verisimilis — probable (verus true + similis like)",
+    level: "hard",
+  },
+  {
+    word: "Luminous",
+    partOfSpeech: "adjective",
+    definition: "Bright and shining, especially in the dark; full of light.",
+    exampleSentence: "The luminous moon lit the entire valley below.",
+    etymology: "Latin luminosus — full of light (lumen light)",
+    level: "easy",
+  },
+  {
+    word: "Crepuscular",
+    partOfSpeech: "adjective",
+    definition:
+      "Relating to or resembling twilight; appearing or active in the twilight hours.",
+    exampleSentence:
+      "Deer are crepuscular animals, most active at dusk and dawn.",
+    etymology: "Latin crepusculum — twilight",
+    level: "hard",
+  },
+  {
+    word: "Halcyon",
+    partOfSpeech: "adjective",
+    definition:
+      "Denoting a period of time in the past that was idyllically happy and peaceful.",
+    exampleSentence:
+      "She looked back with fondness on those halcyon days of childhood.",
+    etymology: "Greek alkyon — kingfisher, believed to calm the sea",
+    level: "medium",
+  },
+  {
+    word: "Numinous",
+    partOfSpeech: "adjective",
+    definition:
+      "Having a strong religious or spiritual quality; indicating or suggesting the presence of a divinity.",
+    exampleSentence:
+      "The ancient cathedral had a numinous atmosphere that silenced all visitors.",
+    etymology: "Latin numen — divine will or power",
+    level: "hard",
+  },
+  {
+    word: "Apricity",
+    partOfSpeech: "noun",
+    definition: "The warmth of the sun in winter.",
+    exampleSentence:
+      "She sat on the bench enjoying the apricity of the January afternoon.",
+    etymology: "Latin apricus — warmed by the sun",
+    level: "easy",
+  },
+  {
+    word: "Palimpsest",
+    partOfSpeech: "noun",
+    definition:
+      "Something altered or overwritten but still bearing visible traces of an earlier form.",
+    exampleSentence:
+      "The old city was a palimpsest of centuries of architecture layered one upon another.",
+    etymology:
+      "Greek palimpsestos — scraped again (palin again + psen to scrape)",
+    level: "hard",
+  },
 ];
+
+const SAMPLE_WORDS_BY_LEVEL = {
+  easy: SAMPLE_WORDS.filter((w) => w.level === "easy"),
+  medium: SAMPLE_WORDS.filter((w) => w.level === "medium"),
+  hard: SAMPLE_WORDS.filter((w) => w.level === "hard"),
+};
 
 const LEVEL_DOTS = ["d0", "d1", "d2", "d3", "d4"];
 
+const TAB_CLASSES: Record<Level, { active: string; inactive: string }> = {
+  daily: {
+    active: "level-daily border font-bold ring-1 ring-current",
+    inactive: "level-daily-inactive border",
+  },
+  all: {
+    active: "level-all border font-bold ring-1 ring-current",
+    inactive: "level-all-inactive border",
+  },
+  easy: {
+    active: "level-easy border font-bold ring-1 ring-current",
+    inactive: "level-easy-inactive border",
+  },
+  medium: {
+    active: "level-medium border font-bold ring-1 ring-current",
+    inactive: "level-medium-inactive border",
+  },
+  hard: {
+    active: "level-hard border font-bold ring-1 ring-current",
+    inactive: "level-hard-inactive border",
+  },
+};
+
 export default function BrowsePage() {
-  const [level, setLevel] = useState<Level>("all");
+  const [level, setLevel] = useState<Level>("daily");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState<"left" | "right">("left");
 
-  // "all" mode: fetch by global index
   const { data: totalCount } = useTotalWordCount();
   const { data: currentWord, isLoading: isLoadingAll } = useWordByIndex(
     level === "all" ? BigInt(currentIndex) : null,
   );
-
-  // filtered mode: fetch all words for the level, index locally
-  const { data: levelWords, isLoading: isLoadingLevel } = useWordsByLevel(
-    level !== "all" ? level : null,
-  );
+  const { data: dailyLevelWords, isLoading: isLoadingDailyLevel } =
+    useDailyWordsByLevel(level !== "all" && level !== "daily" ? level : null);
+  const { data: dailyWords, isLoading: isLoadingDaily } = useDailyWords();
 
   const { data: bookmarks = [] } = useBookmarkedWords();
   const bookmark = useBookmarkWord();
   const removeBookmark = useRemoveBookmark();
 
   const samplesByLevel =
-    level === "all"
+    level === "all" || level === "daily"
       ? SAMPLE_WORDS
-      : SAMPLE_WORDS.filter((w) => w.level === level);
+      : SAMPLE_WORDS_BY_LEVEL[level as "easy" | "medium" | "hard"];
 
-  // Determine the active word list and current display word
   let displayWord: (typeof SAMPLE_WORDS)[0] | null | undefined;
   let maxIndex: number;
   let total: number;
-  const isLoading = level === "all" ? isLoadingAll : isLoadingLevel;
+  const isLoading =
+    level === "all"
+      ? isLoadingAll
+      : level === "daily"
+        ? isLoadingDaily
+        : isLoadingDailyLevel;
 
   if (level === "all") {
     total = Number(totalCount ?? samplesByLevel.length);
@@ -150,10 +282,17 @@ export default function BrowsePage() {
     displayWord =
       currentWord ??
       samplesByLevel[currentIndex % Math.max(samplesByLevel.length, 1)];
-  } else {
-    // Use backend level words if available, else fall back to filtered samples
+  } else if (level === "daily") {
     const activeList =
-      levelWords && levelWords.length > 0 ? levelWords : samplesByLevel;
+      dailyWords && dailyWords.length > 0 ? dailyWords : SAMPLE_WORDS;
+    total = activeList.length;
+    maxIndex = total - 1;
+    displayWord = activeList[currentIndex % Math.max(activeList.length, 1)];
+  } else {
+    const activeList =
+      dailyLevelWords && dailyLevelWords.length > 0
+        ? dailyLevelWords
+        : samplesByLevel;
     total = activeList.length;
     maxIndex = total - 1;
     displayWord = activeList[currentIndex % Math.max(activeList.length, 1)];
@@ -181,42 +320,6 @@ export default function BrowsePage() {
     else bookmark.mutate(BigInt(currentIndex));
   };
 
-  const dragX = useMotionValue(0);
-  const cardRotate = useTransform(dragX, [-200, 200], [-8, 8]);
-  const cardOpacity = useTransform(
-    dragX,
-    [-200, -80, 0, 80, 200],
-    [0.4, 1, 1, 1, 0.4],
-  );
-  const constraintsRef = useRef<HTMLDivElement>(null);
-  const wheelCooldownRef = useRef(false);
-
-  const handleWheel = useCallback(
-    (e: React.WheelEvent<HTMLDivElement>) => {
-      e.preventDefault();
-      if (wheelCooldownRef.current) return;
-      wheelCooldownRef.current = true;
-      setTimeout(() => {
-        wheelCooldownRef.current = false;
-      }, 400);
-      if (e.deltaY > 0) goNext();
-      else if (e.deltaY < 0) goPrev();
-    },
-    [goNext, goPrev],
-  );
-
-  const handleDragEnd = useCallback(
-    (
-      _e: MouseEvent | TouchEvent | PointerEvent,
-      info: { offset: { x: number } },
-    ) => {
-      if (info.offset.x < -50) goNext();
-      else if (info.offset.x > 50) goPrev();
-      dragX.set(0);
-    },
-    [goNext, goPrev, dragX],
-  );
-
   const variants = {
     enter: (dir: "left" | "right") => ({
       x: dir === "left" ? 220 : -220,
@@ -234,122 +337,127 @@ export default function BrowsePage() {
   const dotCount = Math.min(5, Math.max(total, samplesByLevel.length));
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-md mx-auto px-4 pt-10 pb-28">
-        <div className="mb-6">
-          <h1 className="font-display text-2xl font-bold text-foreground mb-4">
-            Browse Words
-          </h1>
-          <div className="flex gap-2 flex-wrap">
-            {(["all", "easy", "medium", "hard"] as Level[]).map((l) => (
-              <button
-                type="button"
-                key={l}
-                data-ocid={l !== "all" ? `level.${l}.tab` : undefined}
-                onClick={() => {
-                  setLevel(l);
-                  setCurrentIndex(0);
-                  setDirection("left");
+    <div
+      className="min-h-screen"
+      style={{
+        backgroundImage: "url('/assets/generated/vocab-bg.dim_800x600.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      <div className="min-h-screen bg-background/85 backdrop-blur-[2px]">
+        <div className="max-w-md mx-auto px-4 pt-10 pb-28">
+          <div className="mb-6">
+            <h1 className="font-display text-2xl font-bold text-foreground mb-4">
+              Browse Words
+            </h1>
+            <div className="flex gap-2 flex-wrap">
+              {(["daily", "all", "easy", "medium", "hard"] as Level[]).map(
+                (l) => (
+                  <button
+                    type="button"
+                    key={l}
+                    data-ocid={`level.${l}.tab`}
+                    onClick={() => {
+                      setLevel(l);
+                      setCurrentIndex(0);
+                      setDirection("left");
+                    }}
+                    className={`px-4 py-1.5 rounded-full text-xs font-body tracking-wide uppercase border transition-all ${
+                      level === l
+                        ? TAB_CLASSES[l].active
+                        : TAB_CLASSES[l].inactive
+                    }`}
+                  >
+                    {l === "all"
+                      ? "All"
+                      : l === "daily"
+                        ? "✦ Daily"
+                        : l.charAt(0).toUpperCase() + l.slice(1)}
+                  </button>
+                ),
+              )}
+            </div>
+            {level === "daily" && (
+              <p className="mt-2 text-xs text-muted-foreground font-body">
+                Today&apos;s 20 words · refreshes daily
+              </p>
+            )}
+            {(level === "easy" || level === "medium" || level === "hard") && (
+              <p className="mt-2 text-xs text-muted-foreground font-body">
+                20 {level} words · refreshes daily
+              </p>
+            )}
+          </div>
+
+          <div className="flex items-center justify-end mb-4">
+            <span className="text-xs text-muted-foreground font-body">
+              Use arrows to navigate
+            </span>
+          </div>
+
+          <div className="relative overflow-visible">
+            <AnimatePresence mode="wait" custom={direction}>
+              <motion.div
+                key={`${currentIndex}-${level}`}
+                custom={direction}
+                variants={variants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{
+                  x: { type: "spring", stiffness: 280, damping: 30 },
+                  opacity: { duration: 0.28, ease: [0.25, 0.46, 0.45, 0.94] },
+                  scale: { duration: 0.28, ease: [0.25, 0.46, 0.45, 0.94] },
                 }}
-                className={`px-4 py-1.5 rounded-full text-xs font-body font-semibold tracking-wide uppercase border transition-all ${
-                  level === l
-                    ? l === "easy"
-                      ? "level-easy border"
-                      : l === "medium"
-                        ? "level-medium border"
-                        : l === "hard"
-                          ? "level-hard border"
-                          : "bg-primary text-primary-foreground border-primary"
-                    : "border-border text-muted-foreground hover:text-foreground"
-                }`}
               >
-                {l === "all" ? "All" : l.charAt(0).toUpperCase() + l.slice(1)}
-              </button>
-            ))}
+                {isLoading ? (
+                  <WordCardSkeleton />
+                ) : displayWord ? (
+                  <WordCardDisplay
+                    word={displayWord}
+                    index={BigInt(currentIndex)}
+                    isBookmarked={isBookmarked}
+                    onBookmarkToggle={handleBookmarkToggle}
+                    animate={false}
+                  />
+                ) : null}
+              </motion.div>
+            </AnimatePresence>
           </div>
-        </div>
 
-        <div className="flex items-center justify-between mb-4">
-          <span className="text-xs text-muted-foreground font-body">
-            Word {currentIndex + 1} of{" "}
-            {total > 0 ? total : samplesByLevel.length}
-          </span>
-          <span className="text-xs text-muted-foreground font-body">
-            Swipe or use arrows
-          </span>
-        </div>
-
-        <div
-          ref={constraintsRef}
-          className="relative overflow-visible"
-          onWheel={handleWheel}
-        >
-          <AnimatePresence mode="wait" custom={direction}>
-            <motion.div
-              key={`${currentIndex}-${level}`}
-              custom={direction}
-              variants={variants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{
-                x: { type: "spring", stiffness: 280, damping: 30 },
-                opacity: { duration: 0.28, ease: [0.25, 0.46, 0.45, 0.94] },
-                scale: { duration: 0.28, ease: [0.25, 0.46, 0.45, 0.94] },
-              }}
-              style={{ rotate: cardRotate, opacity: cardOpacity, x: dragX }}
-              drag="x"
-              dragConstraints={{ left: 0, right: 0 }}
-              dragElastic={0.15}
-              onDragEnd={handleDragEnd}
-              className="swipe-card cursor-grab active:cursor-grabbing"
+          <div className="flex items-center justify-between mt-5">
+            <button
+              type="button"
+              data-ocid="word.prev.button"
+              onClick={goPrev}
+              disabled={!canGoPrev}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border text-sm font-body font-medium disabled:opacity-30 disabled:cursor-not-allowed hover:bg-secondary transition-colors"
             >
-              {isLoading ? (
-                <WordCardSkeleton />
-              ) : displayWord ? (
-                <WordCardDisplay
-                  word={displayWord}
-                  index={BigInt(currentIndex)}
-                  isBookmarked={isBookmarked}
-                  onBookmarkToggle={handleBookmarkToggle}
-                  animate={false}
+              <ChevronLeft className="w-4 h-4" /> Previous
+            </button>
+            <div className="flex gap-1.5">
+              {LEVEL_DOTS.slice(0, dotCount).map((dotId, i) => (
+                <div
+                  key={dotId}
+                  className={`rounded-full transition-all ${
+                    i === currentIndex % 5
+                      ? "w-4 h-1.5 bg-primary"
+                      : "w-1.5 h-1.5 bg-muted"
+                  }`}
                 />
-              ) : null}
-            </motion.div>
-          </AnimatePresence>
-        </div>
-
-        <div className="flex items-center justify-between mt-5">
-          <button
-            type="button"
-            data-ocid="word.prev.button"
-            onClick={goPrev}
-            disabled={!canGoPrev}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border text-sm font-body font-medium disabled:opacity-30 disabled:cursor-not-allowed hover:bg-secondary transition-colors"
-          >
-            <ChevronLeft className="w-4 h-4" /> Previous
-          </button>
-          <div className="flex gap-1.5">
-            {LEVEL_DOTS.slice(0, dotCount).map((dotId, i) => (
-              <div
-                key={dotId}
-                className={`rounded-full transition-all ${
-                  i === currentIndex % 5
-                    ? "w-4 h-1.5 bg-primary"
-                    : "w-1.5 h-1.5 bg-muted"
-                }`}
-              />
-            ))}
+              ))}
+            </div>
+            <button
+              type="button"
+              data-ocid="word.next.button"
+              onClick={goNext}
+              disabled={!canGoNext}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border text-sm font-body font-medium disabled:opacity-30 disabled:cursor-not-allowed hover:bg-secondary transition-colors"
+            >
+              Next <ChevronRight className="w-4 h-4" />
+            </button>
           </div>
-          <button
-            type="button"
-            data-ocid="word.next.button"
-            onClick={goNext}
-            disabled={!canGoNext}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border text-sm font-body font-medium disabled:opacity-30 disabled:cursor-not-allowed hover:bg-secondary transition-colors"
-          >
-            Next <ChevronRight className="w-4 h-4" />
-          </button>
         </div>
       </div>
     </div>
