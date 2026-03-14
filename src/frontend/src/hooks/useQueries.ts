@@ -2,15 +2,26 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { VocabularyEntry } from "../backend.d";
 import { useActor } from "./useActor";
 
+/** Returns today's date string in IST (UTC+5:30) as YYYY-MM-DD */
+function getTodayIST(): string {
+  const now = new Date();
+  const istOffset = 5.5 * 60 * 60 * 1000;
+  const istDate = new Date(now.getTime() + istOffset);
+  return istDate.toISOString().slice(0, 10);
+}
+
 export function useWordOfTheDay() {
   const { actor, isFetching } = useActor();
+  const today = getTodayIST();
   return useQuery<VocabularyEntry>({
-    queryKey: ["wordOfTheDay"],
+    queryKey: ["wordOfTheDay", today],
     queryFn: async () => {
       if (!actor) throw new Error("No actor");
       return actor.getWordOfTheDay();
     },
     enabled: !!actor && !isFetching,
+    staleTime: 0,
+    refetchOnWindowFocus: true,
   });
 }
 
@@ -54,8 +65,9 @@ export function useWordsByLevel(level: string | null) {
 
 export function useDailyWordsByLevel(level: string | null) {
   const { actor, isFetching } = useActor();
+  const today = getTodayIST();
   return useQuery<VocabularyEntry[]>({
-    queryKey: ["dailyWordsByLevel", level],
+    queryKey: ["dailyWordsByLevel", level, today],
     queryFn: async () => {
       if (!actor || level === null) return [];
       return (actor as any).getDailyWordsByLevel(level) as Promise<
@@ -63,6 +75,8 @@ export function useDailyWordsByLevel(level: string | null) {
       >;
     },
     enabled: !!actor && !isFetching && level !== null,
+    staleTime: 0,
+    refetchOnWindowFocus: true,
   });
 }
 
@@ -92,13 +106,16 @@ export function useBookmarkedWords() {
 
 export function useDailyWords() {
   const { actor, isFetching } = useActor();
+  const today = getTodayIST();
   return useQuery<VocabularyEntry[]>({
-    queryKey: ["dailyWords"],
+    queryKey: ["dailyWords", today],
     queryFn: async () => {
       if (!actor) return [];
       return (actor as any).getDailyWords() as Promise<VocabularyEntry[]>;
     },
     enabled: !!actor && !isFetching,
+    staleTime: 0,
+    refetchOnWindowFocus: true,
   });
 }
 
