@@ -14,6 +14,17 @@ actor {
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);
 
+  // IST offset: UTC+5:30 = 19800 seconds = 19_800_000_000_000 nanoseconds
+  let IST_OFFSET_NS : Int = 19_800_000_000_000;
+
+  // Helper: returns the IST day number since Unix epoch
+  func istDaysSinceEpoch() : Nat {
+    let now : Int = Time.now();
+    let istNow = now + IST_OFFSET_NS;
+    let days = istNow / (24 * 60 * 60 * 1_000_000_000);
+    days.toNat();
+  };
+
   // User Profile Type
   public type UserProfile = {
     name : Text;
@@ -770,20 +781,18 @@ actor {
     vocabularyEntries.filter(func(e) { e.level == level }).size();
   };
 
-  // Get word of the day - Public access
+  // Get word of the day - uses IST midnight as day boundary
   public query ({ caller }) func getWordOfTheDay() : async VocabularyEntry {
-    let now = Time.now();
-    let daysSinceEpoch = now / (24 * 60 * 60 * 1_000_000_000);
-    vocabularyEntries[daysSinceEpoch.toNat() % vocabularyEntries.size()];
+    let daysSinceEpoch = istDaysSinceEpoch();
+    vocabularyEntries[daysSinceEpoch % vocabularyEntries.size()];
   };
 
-  // Get 20 daily words that rotate every day - Public access
+  // Get 20 daily words that rotate every day (IST midnight boundary)
   public query ({ caller }) func getDailyWords() : async [VocabularyEntry] {
-    let now = Time.now();
-    let daysSinceEpoch = now / (24 * 60 * 60 * 1_000_000_000);
+    let daysSinceEpoch = istDaysSinceEpoch();
     let total = vocabularyEntries.size();
     let dailyCount = 20;
-    let offset = (daysSinceEpoch.toNat() * 7) % total;
+    let offset = (daysSinceEpoch * 7) % total;
     var result : [VocabularyEntry] = [];
     var i = 0;
     while (i < dailyCount) {
@@ -794,15 +803,14 @@ actor {
     result;
   };
 
-  // Get 20 daily words for a specific level that rotate every day - Public access
+  // Get 20 daily words for a specific level (IST midnight boundary)
   public query ({ caller }) func getDailyWordsByLevel(level : Text) : async [VocabularyEntry] {
-    let now = Time.now();
-    let daysSinceEpoch = now / (24 * 60 * 60 * 1_000_000_000);
+    let daysSinceEpoch = istDaysSinceEpoch();
     let levelEntries = vocabularyEntries.filter(func(e) { e.level == level });
     let total = levelEntries.size();
     if (total == 0) { return [] };
     let dailyCount = Nat.min(20, total);
-    let offset = (daysSinceEpoch.toNat() * 3) % total;
+    let offset = (daysSinceEpoch * 3) % total;
     var result : [VocabularyEntry] = [];
     var i = 0;
     while (i < dailyCount) {

@@ -22,11 +22,18 @@ const SAMPLE_WORD = {
   level: "medium",
 };
 
-function getTodayISO() {
-  return new Date().toISOString().split("T")[0];
+/** Returns today's date string in IST (UTC+5:30) as YYYY-MM-DD */
+function getTodayIST(): string {
+  const now = new Date();
+  // Offset to IST: UTC+5:30 = 330 minutes
+  const istOffset = 330 * 60 * 1000;
+  const istDate = new Date(
+    now.getTime() + istOffset - now.getTimezoneOffset() * 60 * 1000,
+  );
+  return istDate.toISOString().split("T")[0];
 }
 
-/** Returns the ISO week key (e.g. "2026-W10") for a given ISO date string */
+/** Returns the ISO week key (e.g. "2026-W10") for a given YYYY-MM-DD string */
 function getISOWeekKey(isoDate: string): string {
   const d = new Date(isoDate);
   const day = d.getUTCDay() || 7;
@@ -44,7 +51,7 @@ function useWeeklyStreak() {
   const [daysThisWeek, setDaysThisWeek] = useState(0);
 
   useEffect(() => {
-    const today = getTodayISO();
+    const today = getTodayIST();
     const currentWeek = getISOWeekKey(today);
 
     const savedWeek = localStorage.getItem("weekly_streak_week");
@@ -145,10 +152,11 @@ export default function HomePage({ onNavigate }: HomePageProps) {
               </span>
             </div>
             <h1 className="font-display text-2xl font-bold text-foreground">
-              {new Date().toLocaleDateString("en-US", {
+              {new Date().toLocaleDateString("en-IN", {
                 weekday: "long",
                 month: "long",
                 day: "numeric",
+                timeZone: "Asia/Kolkata",
               })}
             </h1>
           </motion.div>
