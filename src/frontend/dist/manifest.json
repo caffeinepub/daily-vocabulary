@@ -1,0 +1,17 @@
+{
+  "name": "Daily Vocabulary",
+  "short_name": "DailyVocab",
+  "description": "Discover a new word every day",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5f0e8",
+  "theme_color": "#2a9d8f",
+  "icons": [
+    {
+      "src": "/assets/generated/app-icon.dim_512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

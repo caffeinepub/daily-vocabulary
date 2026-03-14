@@ -1,6 +1,6 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { WordCardDisplay } from "../components/WordCardDisplay";
 import { WordCardSkeleton } from "../components/WordCardSkeleton";
 import {
@@ -249,6 +249,8 @@ export default function BrowsePage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState<"left" | "right">("left");
 
+  const touchStartX = useRef<number | null>(null);
+
   const { data: totalCount } = useTotalWordCount();
   const { data: currentWord, isLoading: isLoadingAll } = useWordByIndex(
     level === "all" ? BigInt(currentIndex) : null,
@@ -318,6 +320,18 @@ export default function BrowsePage() {
   const handleBookmarkToggle = () => {
     if (isBookmarked) removeBookmark.mutate(BigInt(currentIndex));
     else bookmark.mutate(BigInt(currentIndex));
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const delta = e.changedTouches[0].clientX - touchStartX.current;
+    touchStartX.current = null;
+    if (delta < -50) goNext();
+    else if (delta > 50) goPrev();
   };
 
   const variants = {
@@ -392,11 +406,15 @@ export default function BrowsePage() {
 
           <div className="flex items-center justify-end mb-4">
             <span className="text-xs text-muted-foreground font-body">
-              Use arrows to navigate
+              Swipe or use arrows to navigate
             </span>
           </div>
 
-          <div className="relative overflow-visible">
+          <div
+            className="relative overflow-visible"
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+          >
             <AnimatePresence mode="wait" custom={direction}>
               <motion.div
                 key={`${currentIndex}-${level}`}

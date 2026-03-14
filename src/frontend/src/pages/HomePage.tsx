@@ -29,8 +29,7 @@ function getTodayISO() {
 /** Returns the ISO week key (e.g. "2026-W10") for a given ISO date string */
 function getISOWeekKey(isoDate: string): string {
   const d = new Date(isoDate);
-  // ISO week: week starts Monday
-  const day = d.getUTCDay() || 7; // 1=Mon … 7=Sun
+  const day = d.getUTCDay() || 7;
   const thursday = new Date(d);
   thursday.setUTCDate(d.getUTCDate() + (4 - day));
   const year = thursday.getUTCFullYear();
@@ -76,7 +75,7 @@ interface HomePageProps {
 }
 
 export default function HomePage({ onNavigate }: HomePageProps) {
-  const { data: word, isLoading, isError } = useWordOfTheDay();
+  const { data: word, isLoading } = useWordOfTheDay();
   const { data: bookmarks = [] } = useBookmarkedWords();
   const bookmark = useBookmarkWord();
   const removeBookmark = useRemoveBookmark();
@@ -155,17 +154,6 @@ export default function HomePage({ onNavigate }: HomePageProps) {
           </motion.div>
 
           {isLoading && <WordCardSkeleton />}
-
-          {isError && (
-            <div
-              data-ocid="word.error_state"
-              className="rounded-2xl border border-destructive/30 bg-destructive/10 p-6 text-center mb-4"
-            >
-              <p className="text-destructive font-body text-sm">
-                Unable to load today's word — showing a sample.
-              </p>
-            </div>
-          )}
 
           {!isLoading && (
             <WordCardDisplay
